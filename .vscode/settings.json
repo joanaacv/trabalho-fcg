@@ -1,0 +1,13 @@
+{
+    "C_Cpp.default.cppStandard": "c++11",
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "never"
+    },
+    "files.associations": {
+        "*.dbclient-js": "javascript",
+        "string": "cpp",
+        "vector": "cpp",
+        "limits": "cpp"
+    },
+}
