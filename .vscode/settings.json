@@ -1,6 +1,6 @@
 {
     "C_Cpp.default.cppStandard": "c++11",
-    "editor.formatOnSave": false,
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.organizeImports": "never"
     },
@@ -10,4 +10,5 @@
         "vector": "cpp",
         "limits": "cpp"
     },
+    "C_Cpp.clang_format_style": "{ SortIncludes: false }"
 }

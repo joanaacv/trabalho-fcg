@@ -26,9 +26,10 @@ uniform int material_uses_texture;
 
 // Identificador que define qual objeto está sendo desenhado no momento
 #define PLANE  0
-#define BED  1
-#define CHAIR 2
-#define LAMP  3
+#define CAT 1
+#define SEAT1 11
+#define SEAT2 12
+#define BED 19
 
 
 uniform int object_id;
@@ -43,6 +44,7 @@ uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
 uniform sampler2D TextureImage3;
 uniform sampler2D TextureImage4;
+uniform sampler2D TextureImage5;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -93,11 +95,23 @@ void main()
         V = texcoords.y;
         color.rgb = texture(TextureImage0, vec2(U,V)).rgb * (lambert + 0.1);
     }
+    else if (object_id == CAT) {
+        color = texture(TextureImage1, texcoords);
+    }
+    else if (object_id == 11) { // SEAT1
+        color = texture(TextureImage3, texcoords); // flat-lay-fabric-texture-background
+    }
+    else if (object_id == 12) { // SEAT2
+        color = texture(TextureImage4, texcoords); // red-handmade-paper-texture-background
+    }
     else if ( object_id == BED )
     {
         U = texcoords.x;
         V = texcoords.y;
         color.rgb = Kd1 * max((0.3 - lambert), 0.0);
+    }
+    else if (object_id == 17) {
+    color = texture(TextureImage2, texcoords);
     }
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
