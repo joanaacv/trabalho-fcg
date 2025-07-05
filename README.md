@@ -7,14 +7,23 @@ Trabalho elaborado e executado pelas alunas Isis Burmeister Pericolo e Joana Ale
 Sobre: Um gato doméstico está a procura do local mais quentinho e confortável para tirar sua soneca. Ajude-o a encontrar o local da sala onde bate o sol.
 
 Especificações:
+
 Malhas poligonais complexas
+
 Transformações geométricas
+
 Câmera livre e câmera look-at
+
 Testes de intersecção entre objetos virtuais
+
 Modelos de iluminação de objetos geométricos
+
 Instâncias de objetos
+
 Mapeamento de texturas
+
 Curvas de Bézier
+
 Animações baseadas no tempo
 
 Manual de utilização da aplicação:
