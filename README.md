@@ -1,4 +1,5 @@
 RELATÓRIO
+
 Trabalho final da disciplina INF01047 - Fundamentos de Computação Gráfica.
 Prof. Eduardo Gastal, semestre de 2025/1.
 Trabalho elaborado e executado pelas alunas Isis Burmeister Pericolo e Joana Alexia Campos de Vargas.
