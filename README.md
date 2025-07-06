@@ -22,4 +22,10 @@ Um gato doméstico está a procura do local mais quentinho e confortável para t
 
 ## Manual de utilização da aplicação
 
+O jogo carrega usando uma camera LookAt.
+
+### Modos de Camera
+Ao pressionar F, o jogo translada a camera para o centro do gato e habilita o modo free camera, onde o usuario pode
+mover livremente o observador usando as teclas W,A,S,D
+
 ## Compilação e Execução

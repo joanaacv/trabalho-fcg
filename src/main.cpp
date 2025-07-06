@@ -44,6 +44,49 @@
 #include "utils.h"
 #include "matrices.h"
 
+// BEGIN - Minhas estruturas e constantes e funcoes
+
+// ESTRUTURAS
+struct FreeCamera {
+  // Variaveis da free camera
+  glm::vec4 w;
+  glm::vec4 u;
+} free_camera;
+
+struct Player {
+  glm::vec4 position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f); // Posição do player
+  float rotation = 0.0; // Rotação do player em torno do eixo Y
+  float movement = 0.0; // Movimento do player
+} player_instance;
+
+struct MovementDirection {
+  // Coordenadas de atualizacao de movimento
+  int move_up = 0;
+  int move_down = 0;
+  int move_left = 0;
+  int move_right = 0;
+  // Constante de aceleracao para movimento com WASD
+  float speed_up = 1.0f; // Aceleração do movimento com WASD
+} movement_direction;
+
+// VARIAVEIS
+
+// Definicao da camera_position_c fora do laco para computar movimento
+glm::vec4 camera_position_c = glm::vec4(0.0f, 7.0f, -5.0f, 1.0f);
+float speed_wasd = 0.01; // Velocidade do WASD
+// Constante de aceleracao para movimento com WASD
+bool use_free_camera = false; // Variavel que define se a free camera esta ativa
+bool first_free_camera_pass = false;
+// Definicao de variaveis vec4 para ter as coordenadas dos objetos
+glm::vec4 cat_position_c = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+// PROTOTIPOS
+
+void CameraMove();
+void PlayerMove();
+
+// END - Minhas estruturas e funcoes
+
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel {
@@ -477,17 +520,45 @@ int main(int argc, char *argv[]) {
     // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
     // Veja slides 195-227 e 229-234 do documento
     // Aula_08_Sistemas_de_Coordenadas.pdf.
-    glm::vec4 camera_position_c =
-        glm::vec4(x, y, z, 1.0f); // Ponto "c", centro da câmera
+
+    // glm::vec4 camera_position_c =
+    //     glm::vec4(x, y, z, 1.0f); // Ponto "c", centro da câmera
     glm::vec4 camera_lookat_l = glm::vec4(
         0.0f, 0.0f, 0.0f,
         1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-    glm::vec4 camera_view_vector =
-        camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde
-                                             // a câmera está virada
+    glm::vec4 camera_view_vector; // Vetor "view", sentido para onde
+                                  // a câmera está virada
     glm::vec4 camera_up_vector = glm::vec4(
         0.0f, 1.0f, 0.0f,
         0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+
+    // Na primeira passada o programa deve entrar nas definicoes de fixed camera
+    // Preciso posicionar essa camera no modelo do player
+    // Aqui eu preciso introduzir o swap entre a free camera e a lookat camera
+    if (use_free_camera == true) {
+      // Recebe as coordenadas do centro do modelo do gato
+      if (first_free_camera_pass) {
+        camera_position_c = glm::vec4(cat_position_c.x, cat_position_c.y,
+                                      cat_position_c.z, 1.0f);
+        first_free_camera_pass = false;
+      } else {
+        // Recebe as coordenadas da camera livre
+        camera_view_vector = glm::vec4(x, y, z, 0.0f);
+      }
+
+      // Calculo dos vetores w e u para usarmos para computar a free camera
+      free_camera.w = vector_w(camera_view_vector, camera_up_vector);
+      free_camera.u = vector_u(camera_view_vector, camera_up_vector);
+      // Up vector da free camera
+      camera_up_vector = crossproduct(free_camera.w, free_camera.u);
+      CameraMove();
+    } else if (use_free_camera == false) {
+      camera_position_c = glm::vec4(x, y, z, 1.0f);
+      // Ajusta o postion c para a fixed camera
+      // Seta o view vector e o camera vector para os valores que serao usados
+      camera_view_vector = camera_lookat_l - camera_position_c;
+      // PlayerWalk();
+    }
 
     // Computamos a matriz "View" utilizando os parâmetros da câmera para
     // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e
@@ -1330,7 +1401,13 @@ void CursorPosCallback(GLFWwindow *window, double xpos, double ypos) {
 
     // Em coordenadas esféricas, o ângulo phi deve ficar entre -pi/2 e +pi/2.
     float phimax = (3.141592f / 2) - 0.01f;
-    float phimin = 0.01f; // nunca deixa olhar de baixo
+    float phimin; // nunca deixa olhar de baixo
+
+    if (!use_free_camera) {
+      phimin = 0.01f;
+    } else {
+      phimin = -phimax; // permite olhar de baixo
+    }
 
     if (g_CameraPhi > phimax)
       g_CameraPhi = phimax;
@@ -1419,6 +1496,47 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
 
   float delta = 3.141592 / 16; // 22.5 graus, em radianos.
 
+  // Implementacao da movimentacao da camera pelas teclas WASD
+  // Quando o botao for pressionado
+  if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+    movement_direction.move_up = 1;
+    if (!use_free_camera) {
+      player_instance.rotation = 179;
+    }
+  }
+  if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+    movement_direction.move_down = 1;
+    if (!use_free_camera) {
+      player_instance.rotation = 0;
+    }
+  }
+  if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+    movement_direction.move_left = 1;
+    if (!use_free_camera) {
+      player_instance.rotation = -90;
+    }
+  }
+  if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+    movement_direction.move_right = 1;
+    if (!use_free_camera) {
+      player_instance.rotation = 90;
+    }
+  }
+
+  // Quando o botao parar de ser pressionado
+  if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+    movement_direction.move_up = 0;
+  }
+  if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+    movement_direction.move_down = 0;
+  }
+  if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+    movement_direction.move_left = 0;
+  }
+  if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+    movement_direction.move_right = 0;
+  }
+
   if (key == GLFW_KEY_X && action == GLFW_PRESS) {
     g_AngleX += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
   }
@@ -1463,6 +1581,22 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
   if (key == GLFW_KEY_R && action == GLFW_PRESS) {
     LoadShadersFromFiles();
     fprintf(stdout, "Shaders recarregados!\n");
+    fflush(stdout);
+  }
+
+  // Se o usuário apertar a tecla F, alternamos o modo de camera para
+  // free_camera
+  if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+    use_free_camera = true;
+    first_free_camera_pass = true;
+    fprintf(stdout, "Modo de câmera livre ativado!\n");
+    fflush(stdout);
+  }
+
+  // Se o usuário apertar a tecla L, alternamos o modo de camera para look_at
+  if (key == GLFW_KEY_L && action == GLFW_PRESS) {
+    use_free_camera = false;
+    fprintf(stdout, "Modo de câmera lookat ativado!\n");
     fflush(stdout);
   }
 }
@@ -1795,6 +1929,98 @@ void PrintObjModelInfo(ObjModel *model) {
     printf("\n");
   }
 }
+
+// BEGIN - Implementation of my functions
+void CameraMove() {
+  if (movement_direction.move_up == 1) {
+    camera_position_c -= movement_direction.speed_up * free_camera.w;
+    player_instance.position.y -= movement_direction.speed_up *
+                                  cos(player_instance.movement * M_PI / 180);
+  }
+  if (movement_direction.move_down == 1) {
+    camera_position_c += movement_direction.speed_up * free_camera.w;
+    player_instance.position.y += movement_direction.speed_up *
+                                  cos(player_instance.movement * M_PI / 180);
+  }
+  if (movement_direction.move_left == 1) {
+    camera_position_c -= movement_direction.speed_up * free_camera.u;
+    player_instance.position.x -= movement_direction.speed_up *
+                                  cos(player_instance.movement * M_PI / 180);
+  }
+  if (movement_direction.move_right == 1) {
+    camera_position_c += movement_direction.speed_up * free_camera.u;
+    player_instance.position.y += movement_direction.speed_up *
+                                  cos(player_instance.movement * M_PI / 180);
+  }
+}
+
+// Funcao para movimentar um modelo em fixed camera com WASD
+/*
+void PlayerWalk()
+{
+    //Aqui eu tenho as coordenadas atuais do alien
+    glm::vec4 alien_next_position = alien_position_c;
+    bool check_position = false;
+
+    if (move_up == 1)
+    {
+        //antes de movimentar eu devo conferir se a posicao nao gera colisao
+        //Recebo a nova posicao pras coordenadas teste
+        alien_next_position.y -=speed_up * cos(player_movement * M_PI / 180);
+        check_position =
+CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+        //Se nao houve colisao, podemos atualizar as coordenadas que serao
+desenhadas if(!check_position)
+        {
+            player_position_y -=speed_up * cos(player_movement * M_PI / 180);
+        }
+
+    }
+    if (move_down == 1)
+    {
+        //antes de movimentar eu devo conferir se a posicao nao gera colisao
+        //Recebo a nova posicao pras coordenadas teste
+        alien_next_position.y += speed_up * cos(player_movement * M_PI / 180);
+        check_position =
+CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+        //Se nao houve colisao, podemos atualizar as coordenadas que serao
+desenhadas if(!check_position)
+        {
+            player_position_y += speed_up * cos(player_movement * M_PI / 180);
+        }
+
+    }
+    if (move_left == 1)
+    {
+        //antes de movimentar eu devo conferir se a posicao nao gera colisao
+        //Recebo a nova posicao pras coordenadas teste
+        alien_next_position.x -= speed_up * cos(player_movement * M_PI / 180);
+        check_position =
+CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+        //Se nao houve colisao, podemos atualizar as coordenadas que serao
+desenhadas if(!check_position)
+        {
+            player_position_x -= speed_up * cos(player_movement * M_PI / 180);
+        }
+
+    }
+    if (move_right == 1)
+    {
+        //antes de movimentar eu devo conferir se a posicao nao gera colisao
+        //Recebo a nova posicao pras coordenadas teste
+        alien_next_position.x +=speed_up  * cos(player_movement * M_PI / 180);
+        check_position =
+CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+        //Se nao houve colisao, podemos atualizar as coordenadas que serao
+desenhadas if(!check_position)
+        {
+            player_position_x +=speed_up  * cos(player_movement * M_PI / 180);
+        }
+    }
+}
+*/
+
+// END - Implementation of my functions
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :
