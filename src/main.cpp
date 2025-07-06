@@ -557,7 +557,7 @@ int main(int argc, char *argv[]) {
       // Ajusta o postion c para a fixed camera
       // Seta o view vector e o camera vector para os valores que serao usados
       camera_view_vector = camera_lookat_l - camera_position_c;
-      // PlayerWalk();
+      PlayerMove();
     }
 
     // Computamos a matriz "View" utilizando os parâmetros da câmera para
@@ -645,15 +645,17 @@ int main(int argc, char *argv[]) {
       }
     }
     // Desenha o Gato
-    model = Matrix_Translate(0.0f, -1.1f, 0.0f) *
+    model = Matrix_Translate(player_instance.position.x, -1.1f,
+                             player_instance.position.z) *
             Matrix_Rotate_X(glm::radians(-90.0f)) *
-            Matrix_Scale(0.035f, 0.035f, 0.035f);
+            Matrix_Scale(0.035f, 0.035f, 0.035f) *
+            Matrix_Rotate_Z(player_instance.rotation);
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(g_object_id_uniform, CAT);
     DrawVirtualObject("Cat");
 
     // Desenha a Cama
-    model = Matrix_Translate(4.0f, -1.1f, 0.0f); // Posição da cama
+    model = Matrix_Translate(10.0f, -1.1f, 0.0f); // Posição da cama
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(g_object_id_uniform, BED);
 
@@ -1513,13 +1515,13 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
   if (key == GLFW_KEY_A && action == GLFW_PRESS) {
     movement_direction.move_left = 1;
     if (!use_free_camera) {
-      player_instance.rotation = -90;
+      player_instance.rotation = 80;
     }
   }
   if (key == GLFW_KEY_D && action == GLFW_PRESS) {
     movement_direction.move_right = 1;
     if (!use_free_camera) {
-      player_instance.rotation = 90;
+      player_instance.rotation = -80;
     }
   }
 
@@ -1932,93 +1934,101 @@ void PrintObjModelInfo(ObjModel *model) {
 
 // BEGIN - Implementation of my functions
 void CameraMove() {
+  movement_direction.speed_up = 1.0f;
+
   if (movement_direction.move_up == 1) {
     camera_position_c -= movement_direction.speed_up * free_camera.w;
-    player_instance.position.y -= movement_direction.speed_up *
-                                  cos(player_instance.movement * M_PI / 180);
+    // player_instance.position.y -= movement_direction.speed_up *
+    //                               cos(player_instance.movement * M_PI / 180);
   }
   if (movement_direction.move_down == 1) {
     camera_position_c += movement_direction.speed_up * free_camera.w;
-    player_instance.position.y += movement_direction.speed_up *
-                                  cos(player_instance.movement * M_PI / 180);
+    // player_instance.position.y += movement_direction.speed_up *
+    //                               cos(player_instance.movement * M_PI / 180);
   }
   if (movement_direction.move_left == 1) {
     camera_position_c -= movement_direction.speed_up * free_camera.u;
-    player_instance.position.x -= movement_direction.speed_up *
-                                  cos(player_instance.movement * M_PI / 180);
+    // player_instance.position.x -= movement_direction.speed_up *
+    //                               cos(player_instance.movement * M_PI / 180);
   }
   if (movement_direction.move_right == 1) {
     camera_position_c += movement_direction.speed_up * free_camera.u;
-    player_instance.position.y += movement_direction.speed_up *
-                                  cos(player_instance.movement * M_PI / 180);
+    // player_instance.position.x += movement_direction.speed_up *
+    //                               cos(player_instance.movement * M_PI / 180);
   }
 }
 
 // Funcao para movimentar um modelo em fixed camera com WASD
-/*
-void PlayerWalk()
-{
-    //Aqui eu tenho as coordenadas atuais do alien
-    glm::vec4 alien_next_position = alien_position_c;
-    bool check_position = false;
+void PlayerMove() {
+  // Aqui eu tenho as coordenadas atuais do alien
+  glm::vec4 cat_next_position = cat_position_c;
+  bool check_position = false;
+  movement_direction.speed_up = 0.1f;
 
-    if (move_up == 1)
-    {
-        //antes de movimentar eu devo conferir se a posicao nao gera colisao
-        //Recebo a nova posicao pras coordenadas teste
-        alien_next_position.y -=speed_up * cos(player_movement * M_PI / 180);
-        check_position =
-CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-        //Se nao houve colisao, podemos atualizar as coordenadas que serao
-desenhadas if(!check_position)
-        {
-            player_position_y -=speed_up * cos(player_movement * M_PI / 180);
-        }
-
+  if (movement_direction.move_up == 1) {
+    // antes de movimentar eu devo conferir se a posicao nao gera colisao
+    // Recebo a nova posicao pras coordenadas teste
+    cat_next_position.y -= movement_direction.speed_up *
+                           cos(player_instance.movement * M_PI / 180);
+    /*
+    //check_position = CheckCollision
+    //(alien_next_position,g_VirtualScene["sinuca"]);
+    Se nao houve colisao, podemos atualizar as coordenadas que serao desenhadas
+    */
+    if (!check_position) {
+      player_instance.position.z -= movement_direction.speed_up *
+                                    cos(player_instance.movement * M_PI / 180);
     }
-    if (move_down == 1)
-    {
-        //antes de movimentar eu devo conferir se a posicao nao gera colisao
-        //Recebo a nova posicao pras coordenadas teste
-        alien_next_position.y += speed_up * cos(player_movement * M_PI / 180);
-        check_position =
-CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-        //Se nao houve colisao, podemos atualizar as coordenadas que serao
-desenhadas if(!check_position)
-        {
-            player_position_y += speed_up * cos(player_movement * M_PI / 180);
-        }
-
+  }
+  if (movement_direction.move_down == 1) {
+    // antes de movimentar eu devo conferir se a posicao nao gera colisao
+    // Recebo a nova posicao pras coordenadas teste
+    cat_next_position.y += movement_direction.speed_up *
+                           cos(player_instance.movement * M_PI / 180);
+    /*
+    check_position =
+    CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+    */
+    // Se nao houve colisao, podemos atualizar as coordenadas que serao
+    // desenhadas
+    if (!check_position) {
+      player_instance.position.z += movement_direction.speed_up *
+                                    cos(player_instance.movement * M_PI / 180);
     }
-    if (move_left == 1)
-    {
-        //antes de movimentar eu devo conferir se a posicao nao gera colisao
-        //Recebo a nova posicao pras coordenadas teste
-        alien_next_position.x -= speed_up * cos(player_movement * M_PI / 180);
-        check_position =
-CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-        //Se nao houve colisao, podemos atualizar as coordenadas que serao
-desenhadas if(!check_position)
-        {
-            player_position_x -= speed_up * cos(player_movement * M_PI / 180);
-        }
-
+  }
+  if (movement_direction.move_left == 1) {
+    // antes de movimentar eu devo conferir se a posicao nao gera colisao
+    // Recebo a nova posicao pras coordenadas teste
+    cat_next_position.x -= movement_direction.speed_up *
+                           cos(player_instance.movement * M_PI / 180);
+    /*
+    check_position =
+    CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+    //Se nao houve colisao, podemos atualizar as coordenadas que serao
+    desenhadas
+    */
+    if (!check_position) {
+      player_instance.position.x -= movement_direction.speed_up *
+                                    cos(player_instance.movement * M_PI / 180);
     }
-    if (move_right == 1)
-    {
-        //antes de movimentar eu devo conferir se a posicao nao gera colisao
-        //Recebo a nova posicao pras coordenadas teste
-        alien_next_position.x +=speed_up  * cos(player_movement * M_PI / 180);
-        check_position =
-CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-        //Se nao houve colisao, podemos atualizar as coordenadas que serao
-desenhadas if(!check_position)
-        {
-            player_position_x +=speed_up  * cos(player_movement * M_PI / 180);
-        }
+  }
+  if (movement_direction.move_right == 1) {
+    // antes de movimentar eu devo conferir se a posicao nao gera colisao
+    // Recebo a nova posicao pras coordenadas teste
+    cat_next_position.x += movement_direction.speed_up *
+                           cos(player_instance.movement * M_PI / 180);
+    /*
+    check_position =
+    CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
+    */
+    // Se nao houve colisao, podemos atualizar as coordenadas que serao
+    // desenhadas
+    if (!check_position) {
+      player_instance.position.x += movement_direction.speed_up *
+                                    cos(player_instance.movement * M_PI / 180);
     }
+  }
 }
-*/
 
 // END - Implementation of my functions
 
