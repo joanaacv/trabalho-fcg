@@ -314,8 +314,9 @@ int main(int argc, char *argv[]) {
   // Criamos uma janela do sistema operacional, com 800 colunas e 600 linhas
   // de pixels, e com título "INF01047 ...".
   GLFWwindow *window;
-  window = glfwCreateWindow(800, 600, "INF01047 - 270178 - Joana Campos", NULL,
-                            NULL);
+  window = glfwCreateWindow(
+      800, 600, "INF01047 - 270178 - Joana Campos & Isis Burmeister", NULL,
+      NULL);
   if (!window) {
     glfwTerminate();
     fprintf(stderr, "ERROR: glfwCreateWindow() failed.\n");
@@ -366,12 +367,25 @@ int main(int argc, char *argv[]) {
   LoadTextureImage(
       "../../data/Poliigon_WoodFloorAsh_4186_BaseColor.jpg"); // TextureImage0
   LoadTextureImage("../../data/Cat/Cat_diffuse.jpg");         // TextureImage1
-  LoadTextureImage("../../data/oak-wood-textured-design-background.jpg");
-  LoadTextureImage("../../data/flat-lay-fabric-texture-background.jpg");
-  LoadTextureImage("../../data/red-handmade-paper-texture-background.jpg");
+  LoadTextureImage(
+      "../../data/LivingRoom/Sofa/textures/1.jpg"); // TextureImage2
+  LoadTextureImage(
+      "../../data/LivingRoom/Sofa/textures/2.jpg"); // TextureImage3
+  LoadTextureImage(
+      "../../data/flat-lay-fabric-texture-background.jpg"); // TextureImage4
+  LoadTextureImage(
+      "../../data/red-handmade-paper-texture-background.jpg"); // TextureImage5
+  LoadTextureImage("../../data/rug-texture.jpg");              // TextureImage6
+  LoadTextureImage("../../data/wall.jpg");                     // TextureImage7
 
   // Construímos a representação de objetos geométricos através de malhas de
   // triângulos
+
+  // Construímos a representação de objetos geométricos através de malhas de
+  // triângulos
+  ObjModel spheremodel("../../data/sphere.obj");
+  ComputeNormals(&spheremodel);
+  BuildTrianglesAndAddToVirtualScene(&spheremodel);
 
   ObjModel planemodel("../../data/plane.obj");
   ComputeNormals(&planemodel);
@@ -382,91 +396,17 @@ int main(int argc, char *argv[]) {
   ComputeNormals(&catModel);
   BuildTrianglesAndAddToVirtualScene(&catModel);
 
-  // Carrega a Cama
-  ObjModel bedmodel("../../data/bedroom_Obj/Objects/Bed/Bed.obj");
-  ComputeNormals(&bedmodel);
-  BuildTrianglesAndAddToVirtualScene(&bedmodel);
+  ObjModel rugModel("../../data/LivingRoom/Rug/Rug.obj");
+  ComputeNormals(&rugModel);
+  BuildTrianglesAndAddToVirtualScene(&rugModel);
 
-  // Carrega a Cadeira
-  ObjModel chairmodel("../../data/bedroom_Obj/Objects/Chair/Chair.obj");
-  ComputeNormals(&chairmodel);
-  BuildTrianglesAndAddToVirtualScene(&chairmodel);
+  ObjModel sofaModel("../../data/LivingRoom/Sofa/files/sofa.obj");
+  ComputeNormals(&sofaModel);
+  BuildTrianglesAndAddToVirtualScene(&sofaModel);
 
-  // Carrega a Lâmpada
-  ObjModel lampmodel("../../data/bedroom_Obj/Objects/Lamp/Lamp.obj");
-  ComputeNormals(&lampmodel);
-  BuildTrianglesAndAddToVirtualScene(&lampmodel);
-
-  ObjModel bedsideTableModel(
-      "../../data/bedroom_Obj/Objects/Bedside_table/Bedside_table.obj");
-  ComputeNormals(&bedsideTableModel);
-  BuildTrianglesAndAddToVirtualScene(&bedsideTableModel);
-
-  ObjModel bookStack1Model(
-      "../../data/bedroom_Obj/Objects/Book_stack_1/Book_stack_1.obj");
-  ComputeNormals(&bookStack1Model);
-  BuildTrianglesAndAddToVirtualScene(&bookStack1Model);
-
-  ObjModel bookStack2Model(
-      "../../data/bedroom_Obj/Objects/Book_stack_2/Book_stack_2.obj");
-  ComputeNormals(&bookStack2Model);
-  BuildTrianglesAndAddToVirtualScene(&bookStack2Model);
-
-  ObjModel carpetModel("../../data/bedroom_Obj/Objects/Carpet/Carpet.obj");
-  ComputeNormals(&carpetModel);
-  BuildTrianglesAndAddToVirtualScene(&carpetModel);
-
-  ObjModel keyboardModel(
-      "../../data/bedroom_Obj/Objects/Keyboard/Keyboard.obj");
-  ComputeNormals(&keyboardModel);
-  BuildTrianglesAndAddToVirtualScene(&keyboardModel);
-
-  ObjModel pcModel("../../data/bedroom_Obj/Objects/PC/PC.obj");
-  ComputeNormals(&pcModel);
-  BuildTrianglesAndAddToVirtualScene(&pcModel);
-
-  ObjModel picture1Model(
-      "../../data/bedroom_Obj/Objects/Picture_1/Picture_1.obj");
-  ComputeNormals(&picture1Model);
-  BuildTrianglesAndAddToVirtualScene(&picture1Model);
-
-  ObjModel picture2Model(
-      "../../data/bedroom_Obj/Objects/Picture_2/Picture_2.obj");
-  ComputeNormals(&picture2Model);
-  BuildTrianglesAndAddToVirtualScene(&picture2Model);
-
-  ObjModel picture3Model(
-      "../../data/bedroom_Obj/Objects/Picture_3/Picture_3.obj");
-  ComputeNormals(&picture3Model);
-  BuildTrianglesAndAddToVirtualScene(&picture3Model);
-
-  ObjModel seatModel("../../data/bedroom_Obj/Objects/Seat/Seat.obj");
+  ObjModel seatModel("../../data/LivingRoom/Seat/Seat.obj");
   ComputeNormals(&seatModel);
   BuildTrianglesAndAddToVirtualScene(&seatModel);
-
-  ObjModel tableModel("../../data/bedroom_Obj/Objects/Table/Table.obj");
-  ComputeNormals(&tableModel);
-  BuildTrianglesAndAddToVirtualScene(&tableModel);
-
-  ObjModel wallBookshelfModel(
-      "../../data/bedroom_Obj/Objects/Wall_bookshelf/Wall_bookshelf.obj");
-  ComputeNormals(&wallBookshelfModel);
-  BuildTrianglesAndAddToVirtualScene(&wallBookshelfModel);
-
-  ObjModel wallShelfModel(
-      "../../data/bedroom_Obj/Objects/Wall_shelf/Wall_shelf.obj");
-  ComputeNormals(&wallShelfModel);
-  BuildTrianglesAndAddToVirtualScene(&wallShelfModel);
-
-  ObjModel wardrobeModel(
-      "../../data/bedroom_Obj/Objects/Wardrobe/Wardrobe.obj");
-  ComputeNormals(&wardrobeModel);
-  BuildTrianglesAndAddToVirtualScene(&wardrobeModel);
-
-  ObjModel woodFloorModel(
-      "../../data/bedroom_Obj/Objects/Wood_floor/Wood_floor.obj");
-  ComputeNormals(&woodFloorModel);
-  BuildTrianglesAndAddToVirtualScene(&woodFloorModel);
 
   if (argc > 1) {
     ObjModel model(argv[1]);
@@ -607,32 +547,28 @@ int main(int argc, char *argv[]) {
 
 #define PLANE 0
 #define CAT 1
+#define SPHERE 2
+#define SOFA1 3
+#define SOFA2 4
+#define SOFA3 5
+#define RUG 6
+#define WALL 7
+
 #define SEAT1 11
 #define SEAT2 12
 
-#define BEDSIDE_TABLE 2
-#define CHAIR 3
-#define LAMP 4
-#define BOOK_STACK_1 5
-#define BOOK_STACK_2 6
-#define CARPET 7
-#define KEYBOARD 8
-#define PC 9
-#define PICTURE_1 20
-#define PICTURE_2 21
-#define PICTURE_3 22
-#define SEAT 13
-#define TABLE 14
-#define WALL_BOOKSHELF 15
-#define WALL_SHELF 16
-#define WARDROBE 17
-#define WOOD_FLOOR 18
-#define BED 19
+    // Desenhamos o modelo da esfera
+    model = Matrix_Translate(-5.0f, 10.0f, 0.0f) * Matrix_Rotate_Z(0.6f) *
+            Matrix_Rotate_X(0.2f) *
+            Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
+    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform1i(g_object_id_uniform, SPHERE);
+    DrawVirtualObject("the_sphere");
 
     // Desenhamos o plano do chão
     // Renderiza vários planos lado a lado formando um plano contínuo maior
-    int num_planes_x = 12;
-    int num_planes_z = 12;
+    int num_planes_x = 7;
+    int num_planes_z = 7;
     float plane_size = 2.0f; // Tamanho do plano individual
     for (int ix = 0; ix < num_planes_x; ++ix) {
       for (int iz = 0; iz < num_planes_z; ++iz) {
@@ -644,124 +580,98 @@ int main(int argc, char *argv[]) {
         DrawVirtualObject("the_plane");
       }
     }
+
+    // Desenha as paredes
+    float wall_height = 0.5f;
+    float wall_thickness = 1.5f;
+    float wall_z = (num_planes_z / 2.0f) * plane_size;
+    float wall_x = (num_planes_x / 2.0f) * plane_size;
+
+    // Parede fundo (z+)
+    model = Matrix_Translate(0.0f, -0.1f, wall_z) *
+            Matrix_Rotate_X(glm::radians(-90.0f)) *
+            Matrix_Scale(num_planes_x, wall_height, wall_thickness);
+    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform1i(g_object_id_uniform, WALL);
+    DrawVirtualObject("the_plane");
+
+    // Parede frente (z-)
+    model = Matrix_Translate(0.0f, -0.1f, -wall_z) *
+            Matrix_Rotate_X(glm::radians(90.0f)) *
+            Matrix_Scale(num_planes_x, wall_height, wall_thickness);
+    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform1i(g_object_id_uniform, WALL);
+    DrawVirtualObject("the_plane");
+
+    // Parede esquerda (x-)
+    model = Matrix_Translate(-wall_x, -0.1f, 0.0f) *
+            Matrix_Rotate_Z(glm::radians(-90.0f)) *
+            Matrix_Rotate_Y(glm::radians(90.0f)) *
+            Matrix_Scale(num_planes_x, wall_height, wall_thickness);
+    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform1i(g_object_id_uniform, WALL);
+    DrawVirtualObject("the_plane");
+
+    // Parede direita (x+)
+    model = Matrix_Translate(wall_x, -0.1f, 0.0f) *
+            Matrix_Rotate_Z(glm::radians(90.0f)) *
+            Matrix_Rotate_Y(glm::radians(90.0f)) *
+            Matrix_Scale(num_planes_x, wall_height, wall_thickness);
+    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
+    glUniform1i(g_object_id_uniform, WALL);
+    DrawVirtualObject("the_plane");
+
     // Desenha o Gato
     model = Matrix_Translate(player_instance.position.x, -1.1f,
                              player_instance.position.z) *
             Matrix_Rotate_X(glm::radians(-90.0f)) *
-            Matrix_Scale(0.035f, 0.035f, 0.035f) *
+            Matrix_Scale(0.03f, 0.03f, 0.03f) *
             Matrix_Rotate_Z(player_instance.rotation);
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(g_object_id_uniform, CAT);
     DrawVirtualObject("Cat");
 
-    // Desenha a Cama
-    model = Matrix_Translate(10.0f, -1.1f, 0.0f); // Posição da cama
+    // Desenha o tapete
+    model = Matrix_Translate(0.0f, -1.1f, 2.2f) *
+            Matrix_Rotate_X(glm::radians(-90.0f)) *
+            Matrix_Scale(0.025f, 0.028f, 0.025f); // Posição do tapete
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, BED);
+    glUniform1i(g_object_id_uniform, RUG);
+    DrawVirtualObject("Architectural_Model_008_04_Carpet");
 
-    // Enviando as propriedades de material do objeto para o shader
-    glUniform3fv(glGetUniformLocation(g_GpuProgramID, "Kd_uniform"), 1,
-                 bedmodel.materials[1].diffuse);
-    glUniform3fv(glGetUniformLocation(g_GpuProgramID, "Ka_uniform"), 1,
-                 bedmodel.materials[1].ambient);
-    glUniform3fv(glGetUniformLocation(g_GpuProgramID, "Ks_uniform"), 1,
-                 bedmodel.materials[1].specular);
-    DrawVirtualObject("Bed_Cube.001"); //
-
+    // Desenha o Sofa
     model =
-        Matrix_Translate(-4.0f, -1.1f, 0.0f); // Posição da mesa de cabeceira
+        Matrix_Translate(-1.0f, -1.1f, 1.8) * Matrix_Scale(2.0f, 2.0f, 2.0f);
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, BEDSIDE_TABLE);
-    DrawVirtualObject("Bedside_table_Cube.037"); //
+    glUniform1i(g_object_id_uniform, SOFA1);
+    DrawVirtualObject("Cube.004_Cube.009"); // sofa lateral
+    DrawVirtualObject("Cube.005_Cube.011"); // sofa lateral
+    DrawVirtualObject("Cube.002_Cube.016"); // sofa lateral
+    DrawVirtualObject("Cube.009_Cube.017"); // sofa puff
 
-    // Desenha a Cadeira
-    model = Matrix_Translate(-6.0f, -1.1f, 1.5f); // Posição da cadeira
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, CHAIR);
-    DrawVirtualObject("Chair_Cube.033"); //
+    glUniform1i(g_object_id_uniform, SOFA2);
+    DrawVirtualObject("Cube_Cube.006");     // sofa base
+    DrawVirtualObject("Cube.006_Cube.012"); // sofa base
+    DrawVirtualObject("Cube.001_Cube.008"); // sofa base
 
-    // Desenha a Lâmpada
-    model = Matrix_Translate(1.5f, 0.0f, -1.5f); // Posição da lâmpada
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, LAMP);
-    DrawVirtualObject("Lamp_Cube.038");
+    glUniform1i(g_object_id_uniform, SOFA3);
+    DrawVirtualObject("Cube.003_Cube.013"); // almofada
+    DrawVirtualObject("Cube.007_Cube.014"); // almofada
+    DrawVirtualObject("Cube.008_Cube.015"); // almofada
 
-    // Desenha a Pilha de Livros 1
-    model =
-        Matrix_Translate(-2.0f, -1.1f, 2.0f); // Posição da pilha de livros 1
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, BOOK_STACK_1);
-    DrawVirtualObject("Book_stack_1_Cube.009"); //
-    // Desenha a Pilha de Livros 2
-    model =
-        Matrix_Translate(-2.0f, -1.1f, -2.0f); // Posição da pilha de livros 2
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, BOOK_STACK_2);
-    DrawVirtualObject("Book_stack_2_Cube.004"); //
-    // Desenha o Tapete
-    model = Matrix_Translate(0.0f, -1.1f, 0.0f); // Posição do tapete
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, CARPET);
-    DrawVirtualObject("Carpet_Circle.001"); //
-    // Desenha o Teclado
-    model = Matrix_Translate(0.0f, -1.1f, -3.0f); // Posição do teclado
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, KEYBOARD);
-    DrawVirtualObject("Keyboard_Cube.036"); //
-    // Desenha o PC
-    model = Matrix_Translate(0.0f, -1.1f, 3.0f); // Posição do PC
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, PC);
-    DrawVirtualObject("PC_Cube.035"); //
-    // Desenha a Imagem 1
-    model = Matrix_Translate(3.0f, 1.0f, -3.0f); // Posição da imagem 1
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, PICTURE_1);
-    DrawVirtualObject("Picture_1_Cube.028"); //
-    // Desenha a Imagem 2
-    model = Matrix_Translate(3.0f, 1.0f, 0.0f); // Posição da imagem 2
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, PICTURE_2);
-    DrawVirtualObject("Picture_2_Cube.030"); //
-    // Desenha a Imagem 3
-    model = Matrix_Translate(3.0f, 1.0f, 3.0f); // Posição da imagem 3
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, PICTURE_3);
-    DrawVirtualObject("Picture_3_Cube.029"); //
-
-    model = Matrix_Translate(-5.0f, -1.1f, 6.0f) *
-            Matrix_Rotate_Y(glm::radians(-100.0f)); // Posição do assento 1
+    // Denhesa puffs
+    model = Matrix_Translate(2.0f, -1.1f, 5.5f) *
+            Matrix_Rotate_Y(glm::radians(100.0f)); // puff 1
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(g_object_id_uniform, SEAT1);
     DrawVirtualObject("Seat_Sphere.002");
 
-    model = Matrix_Translate(-8.0f, -1.1f, 7.0f) *
-            Matrix_Scale(1.3f, 1.3f, 1.3f); // Posição do assento 2
+    model = Matrix_Translate(4.0f, -1.1f, 0.0f) *
+            Matrix_Rotate_Y(glm::radians(-150.0f)) *
+            Matrix_Scale(1.3f, 1.3f, 1.3f); // puff 2
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(g_object_id_uniform, SEAT2);
     DrawVirtualObject("Seat_Sphere.002");
-
-    // Desenha a Mesa
-    model = Matrix_Translate(0.0f, -1.1f, 6.0f); // Posição da mesa
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, TABLE);
-    DrawVirtualObject("Table_Cube.034"); //
-    // Desenha a Estante de Parede
-    model = Matrix_Translate(-6.0f, 0.0f, 0.0f); // Posição da estante de parede
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, WALL_BOOKSHELF);
-    DrawVirtualObject("Wall_bookshelf_Cube.014"); //
-    // Desenha a Prateleira de Parede
-    model =
-        Matrix_Translate(6.0f, 0.0f, 0.0f); // Posição da prateleira de parede
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, WALL_SHELF);
-    DrawVirtualObject("Wall_shelf_Cube.017"); //
-    // Desenha o Guarda-Roupa
-    model = Matrix_Translate(0.0f, -1.1f, -6.0f); // Posição do guarda-roupa
-    glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(g_object_id_uniform, WARDROBE);
-    DrawVirtualObject("Wardrobe_Cube.032"); //
 
     // Imprimimos na tela os ângulos de Euler que controlam a rotação do
     // terceiro cubo.
@@ -938,6 +848,9 @@ void LoadShadersFromFiles() {
   glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage2"), 2);
   glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage3"), 3);
   glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage4"), 4);
+  glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage5"), 5);
+  glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage6"), 6);
+  glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage7"), 7);
   glUseProgram(0);
 }
 
