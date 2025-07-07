@@ -377,6 +377,7 @@ int main(int argc, char *argv[]) {
       "../../data/red-handmade-paper-texture-background.jpg"); // TextureImage5
   LoadTextureImage("../../data/rug-texture.jpg");              // TextureImage6
   LoadTextureImage("../../data/wall.jpg");                     // TextureImage7
+  LoadTextureImage("../../data/lowpoly_sun.jpg");              // TextureImage8
 
   // Construímos a representação de objetos geométricos através de malhas de
   // triângulos
@@ -851,6 +852,7 @@ void LoadShadersFromFiles() {
   glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage5"), 5);
   glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage6"), 6);
   glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage7"), 7);
+  glUniform1i(glGetUniformLocation(g_GpuProgramID, "TextureImage8"), 8);
   glUseProgram(0);
 }
 

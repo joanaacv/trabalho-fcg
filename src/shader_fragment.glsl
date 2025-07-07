@@ -53,6 +53,7 @@ uniform sampler2D TextureImage4;
 uniform sampler2D TextureImage5;
 uniform sampler2D TextureImage6;
 uniform sampler2D TextureImage7;
+uniform sampler2D TextureImage8;
 
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
@@ -141,6 +142,36 @@ void main()
         float repeat = 8.0; 
         vec2 tiled_coords = fract(texcoords * repeat);
         color = texture(TextureImage6, tiled_coords);
+    }
+    else if (object_id == SPHERE){
+        // PREENCHA AQUI as coordenadas de textura da esfera, computadas com
+        // projeção esférica EM COORDENADAS DO MODELO. Utilize como referência
+        // o slides 134-150 do documento Aula_20_Mapeamento_de_Texturas.pdf.
+        // A esfera que define a projeção deve estar centrada na posição
+        // "bbox_center" definida abaixo.
+
+        // Você deve utilizar:
+        //   função 'length( )' : comprimento Euclidiano de um vetor
+        //   função 'atan( , )' : arcotangente. Veja https://en.wikipedia.org/wiki/Atan2.
+        //   função 'asin( )'   : seno inverso.
+        //   constante M_PI
+        //   variável position_model
+
+        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+        float raio = 1.0;
+
+        // Normalizando a posição do modelo para a superfície da esfera
+        vec4 p_linha = bbox_center + (raio * ((position_model - bbox_center) / length(position_model - bbox_center)));
+        vec4 vetor_p = p_linha - bbox_center;
+
+        // Calculando os ângulos esféricos
+        float tetha = atan(vetor_p.x,vetor_p.z);
+        float phi = asin(vetor_p.y / raio);
+
+        // Calculando as coordenadas do mapeamento para a textura
+        U = (tetha + M_PI) / (2*M_PI);
+        V = (phi + M_PI_2) / M_PI;
+        color = texture(TextureImage8, vec2(U,V));
     }
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
