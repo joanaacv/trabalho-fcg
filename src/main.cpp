@@ -282,6 +282,8 @@ bool g_UsePerspectiveProjection = true;
 // Variável que controla se o texto informativo será mostrado na tela.
 bool g_ShowInfoText = true;
 
+int g_ShadingMode = 0; // 0 = Phong, 1 = Gouraud
+
 // Variáveis que definem um programa de GPU (shaders). Veja função
 // LoadShadersFromFiles().
 GLuint g_GpuProgramID = 0;
@@ -586,6 +588,9 @@ int main(int argc, char *argv[]) {
 
 #define SEAT1 11
 #define SEAT2 12
+
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "shading_mode"),
+                g_ShadingMode);
 
     // Desenhamos o modelo da esfera
     model =
@@ -1493,6 +1498,13 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
   }
   if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
     g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
+  }
+
+  if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+    g_ShadingMode = 0;
+  }
+  if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+    g_ShadingMode = 1;
   }
 
   // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para
