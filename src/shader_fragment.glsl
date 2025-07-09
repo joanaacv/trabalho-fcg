@@ -12,6 +12,7 @@ in vec4 position_model;
 
 // Coordenadas de textura obtidas do arquivo OBJ (se existirem!)
 in vec2 texcoords;
+in vec4 gouraud_color;
 
 // Matrizes computadas no código C++ e enviadas para a GPU
 uniform mat4 model;
@@ -39,6 +40,7 @@ uniform int material_uses_texture;
 
 
 uniform int object_id;
+uniform int shading_mode;
 
 // Parâmetros da axis-aligned bounding box (AABB) do modelo
 uniform vec4 bbox_min;
@@ -77,15 +79,19 @@ void main()
     // vértice.
     vec4 p = position_world;
 
-    // Normal do fragmento atual, interpolada pelo rasterizador a partir das
-    // normais de cada vértice.
-    vec4 n = normalize(normal);
+    
+    // Se for Phong, calcula a iluminação aqui (por fragmento)
+    // Exemplo simples de Phong:
+    vec3 n = normalize(normal.xyz);
+    vec3 l = normalize(vec3(1.0, 1.0, 0.0)); // direção da luz (ajuste se quiser)
+    vec3 v = normalize((vec3(inverse(view) * vec4(0,0,0,1)) - position_world.xyz));
+    vec3 r = reflect(-l, n);
 
-    // Vetor que define o sentido da fonte de luz em relação ao ponto atual.
-    vec4 l = normalize(vec4(1.0,1.0,0.0,0.0));
+    float ambient = 0.2;
+    float diff = max(dot(n, l), 0.0);
+    float spec = pow(max(dot(r, v), 0.0), 32.0);
 
-    // Vetor que define o sentido da câmera em relação ao ponto atual.
-    vec4 v = normalize(camera_position - p);
+    color = vec4(vec3(ambient + diff + spec), 1.0);
 
     // Coordenadas de textura U e V
     float U = 0.0;
@@ -172,6 +178,14 @@ void main()
         U = (tetha + M_PI) / (2*M_PI);
         V = (phi + M_PI_2) / M_PI;
         color = texture(TextureImage8, vec2(U,V));
+    }
+
+    if (shading_mode == 1) {
+        // Aplica textura multiplicando pela cor Gouraud
+        color = color * gouraud_color;
+        color.a = 1;
+        color.rgb = pow(color.rgb, vec3(1.0,1.0,1.0)/2.2);
+        return;
     }
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é
