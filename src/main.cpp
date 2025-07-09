@@ -43,6 +43,7 @@
 // Headers locais, definidos na pasta "include/"
 #include "utils.h"
 #include "matrices.h"
+#include "collisions.h"
 
 // BEGIN - Minhas estruturas e constantes e funcoes
 
@@ -54,7 +55,7 @@ struct FreeCamera {
 } free_camera;
 
 struct Player {
-  glm::vec4 position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f); // Posição do player
+  glm::vec4 position = glm::vec4(0.0f, 0.0f, -3.0f, 1.0f); // Posição do player
   float rotation = 0.0; // Rotação do player em torno do eixo Y
   float movement = 0.0; // Movimento do player
 } player_instance;
@@ -73,17 +74,22 @@ struct MovementDirection {
 
 // Definicao da camera_position_c fora do laco para computar movimento
 glm::vec4 camera_position_c = glm::vec4(0.0f, 7.0f, -5.0f, 1.0f);
-float speed_wasd = 0.01; // Velocidade do WASD
-// Constante de aceleracao para movimento com WASD
 bool use_free_camera = false; // Variavel que define se a free camera esta ativa
 bool first_free_camera_pass = false;
-// Definicao de variaveis vec4 para ter as coordenadas dos objetos
 glm::vec4 cat_position_c = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+std::vector<std::string>
+    g_ObjectNames; // Vetor que armazena os nomes dos objetos
 
 // PROTOTIPOS
 
 void CameraMove();
 void PlayerMove();
+void LoadAllObjNames(); // Carrega os nomes dos objetos do vetor
+bool CheckAllCollisions();
+void AdjustBoundingBox(
+    std::string name,
+    float scale_factor); // Ajusta a bounding box de acordo com a posicao
 
 // END - Minhas estruturas e funcoes
 
@@ -211,19 +217,6 @@ void ScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
 
 // Definimos uma estrutura que armazenará dados necessários para renderizar
 // cada objeto da cena virtual.
-struct SceneObject {
-  std::string name;   // Nome do objeto
-  size_t first_index; // Índice do primeiro vértice dentro do vetor indices[]
-                      // definido em BuildTrianglesAndAddToVirtualScene()
-  size_t num_indices; // Número de índices do objeto dentro do vetor indices[]
-                      // definido em BuildTrianglesAndAddToVirtualScene()
-  GLenum rendering_mode;         // Modo de rasterização (GL_TRIANGLES,
-                                 // GL_TRIANGLE_STRIP, etc.)
-  GLuint vertex_array_object_id; // ID do VAO onde estão armazenados os
-                                 // atributos do modelo
-  glm::vec3 bbox_min;            // Axis-Aligned Bounding Box do objeto
-  glm::vec3 bbox_max;
-};
 
 // Abaixo definimos variáveis globais utilizadas em várias funções do código.
 
@@ -405,9 +398,19 @@ int main(int argc, char *argv[]) {
   ComputeNormals(&sofaModel);
   BuildTrianglesAndAddToVirtualScene(&sofaModel);
 
+  AdjustBoundingBox("Architectural_Model_008_04_Carpet", 0.03f);
+
   ObjModel seatModel("../../data/LivingRoom/Seat/Seat.obj");
   ComputeNormals(&seatModel);
   BuildTrianglesAndAddToVirtualScene(&seatModel);
+
+  LoadAllObjNames();
+
+  // Adjust bounding box of each object loaded in the scene
+
+  for (auto const &name : g_ObjectNames) {
+    AdjustBoundingBox(name, 0.4f);
+  }
 
   if (argc > 1) {
     ObjModel model(argv[1]);
@@ -559,7 +562,7 @@ int main(int argc, char *argv[]) {
 #define SEAT2 12
 
     // Desenhamos o modelo da esfera
-    model = Matrix_Translate(-5.0f, 10.0f, 0.0f) * Matrix_Rotate_Z(0.6f) *
+    model = Matrix_Translate(-7.0f, 7.0f, 0.0f) * Matrix_Rotate_Z(0.6f) *
             Matrix_Rotate_X(0.2f) *
             Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
@@ -660,7 +663,7 @@ int main(int argc, char *argv[]) {
     DrawVirtualObject("Cube.007_Cube.014"); // almofada
     DrawVirtualObject("Cube.008_Cube.015"); // almofada
 
-    // Denhesa puffs
+    // Desenha puffs
     model = Matrix_Translate(2.0f, -1.1f, 5.5f) *
             Matrix_Rotate_Y(glm::radians(100.0f)); // puff 1
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
@@ -1885,11 +1888,7 @@ void PlayerMove() {
     // Recebo a nova posicao pras coordenadas teste
     cat_next_position.y -= movement_direction.speed_up *
                            cos(player_instance.movement * M_PI / 180);
-    /*
-    //check_position = CheckCollision
-    //(alien_next_position,g_VirtualScene["sinuca"]);
-    Se nao houve colisao, podemos atualizar as coordenadas que serao desenhadas
-    */
+    // check_position = CheckAllCollisions();
     if (!check_position) {
       player_instance.position.z -= movement_direction.speed_up *
                                     cos(player_instance.movement * M_PI / 180);
@@ -1900,12 +1899,7 @@ void PlayerMove() {
     // Recebo a nova posicao pras coordenadas teste
     cat_next_position.y += movement_direction.speed_up *
                            cos(player_instance.movement * M_PI / 180);
-    /*
-    check_position =
-    CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-    */
-    // Se nao houve colisao, podemos atualizar as coordenadas que serao
-    // desenhadas
+    // check_position = CheckAllCollisions();
     if (!check_position) {
       player_instance.position.z += movement_direction.speed_up *
                                     cos(player_instance.movement * M_PI / 180);
@@ -1916,12 +1910,7 @@ void PlayerMove() {
     // Recebo a nova posicao pras coordenadas teste
     cat_next_position.x -= movement_direction.speed_up *
                            cos(player_instance.movement * M_PI / 180);
-    /*
-    check_position =
-    CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-    //Se nao houve colisao, podemos atualizar as coordenadas que serao
-    desenhadas
-    */
+    // check_position = CheckAllCollisions();
     if (!check_position) {
       player_instance.position.x -= movement_direction.speed_up *
                                     cos(player_instance.movement * M_PI / 180);
@@ -1932,18 +1921,80 @@ void PlayerMove() {
     // Recebo a nova posicao pras coordenadas teste
     cat_next_position.x += movement_direction.speed_up *
                            cos(player_instance.movement * M_PI / 180);
-    /*
-    check_position =
-    CheckCollision(alien_next_position,g_VirtualScene["sinuca"]);
-    */
-    // Se nao houve colisao, podemos atualizar as coordenadas que serao
-    // desenhadas
+    // check_position = CheckAllCollisions();
     if (!check_position) {
       player_instance.position.x += movement_direction.speed_up *
                                     cos(player_instance.movement * M_PI / 180);
     }
   }
 }
+
+void LoadAllObjNames() {
+  g_ObjectNames.push_back("the_plane");
+  g_ObjectNames.push_back("the_sphere");
+  g_ObjectNames.push_back("Cat");
+  g_ObjectNames.push_back("Architectural_Model_008_04_Carpet");
+
+  g_ObjectNames.push_back("Cube.004_Cube.009");
+  g_ObjectNames.push_back("Cube.005_Cube.011");
+  g_ObjectNames.push_back("Cube.002_Cube.016");
+  g_ObjectNames.push_back("Cube.009_Cube.017");
+
+  g_ObjectNames.push_back("Cube_Cube.006");
+  g_ObjectNames.push_back("Cube.006_Cube.012");
+  g_ObjectNames.push_back("Cube.001_Cube.008");
+
+  g_ObjectNames.push_back("Cube.003_Cube.013");
+  g_ObjectNames.push_back("Cube.007_Cube.014");
+  g_ObjectNames.push_back("Cube.008_Cube.015");
+  g_ObjectNames.push_back("Seat_Sphere.002");
+}
+
+// This function needs to be iterate between all objects and test collision
+bool CheckAllCollisions() {
+  bool collision_with_walls = false;
+  bool collision_with_objects = false;
+  // bool collision_with_spheres = false;
+  collision_with_objects = CheckCollisionPointCube(
+      player_instance.position, g_VirtualScene["Seat_Sphere.002"]);
+  /*
+  for (const std::string &name : g_ObjectNames) {
+
+    // Use 'name' aqui
+
+    if (name == "Cat") {
+      continue;
+    } else if (name == "Architectural_Model_008_04_Carpet") {
+      continue;
+    } else if (name == "the_plane") {
+      continue;
+    } else {
+      collision_with_objects =
+          CheckCollisionCubeCube(g_VirtualScene["Cat"], g_VirtualScene[name]);
+      if (collision_with_objects) {
+        fprintf(stdout, "Collision with object: %s\n", name.c_str());
+        fflush(stdout);
+      }
+    }
+  }
+  */
+
+  // fprintf(stdout, "Collision with walls: %d\n", collision_with_walls);
+  // fprintf(stdout, "Collision with objects: %d\n", collision_with_objects);
+
+  return collision_with_walls ||
+         collision_with_objects; // Nao colidiu com nenhum modelo
+}
+
+void AdjustBoundingBox(std::string name, float scale_factor) {
+  // Ajuste da bounding box do modelo de esfera
+  g_VirtualScene[name].bbox_min.x *= scale_factor;
+  g_VirtualScene[name].bbox_max.x *= scale_factor;
+  g_VirtualScene[name].bbox_min.y *= scale_factor;
+  g_VirtualScene[name].bbox_max.y *= scale_factor;
+  g_VirtualScene[name].bbox_min.z *= scale_factor;
+  g_VirtualScene[name].bbox_max.z *= scale_factor;
+} // Ajusta a bounding box de acordo com a posicao
 
 // END - Implementation of my functions
 
