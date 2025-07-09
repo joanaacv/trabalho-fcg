@@ -58,7 +58,17 @@ Ao apertar a tecla M, passamos a utilizar Gouraud Shading. Para retornar ao mode
 ![Screenshot 2025-07-08 235843](https://github.com/user-attachments/assets/09cfc253-8830-4028-9658-3fbe2b47c8b9)
 
 ### Modelos de iluminação difuso e Blinn-Phong
-Após habilitar Gourard Shading (tecla M), podemos alternar entre o modelo de iluminação difusa -- ao apertar a tecla 9 -- e o modelo de iluminação Blinn-Phong -- ao apertar a tecla 0.
+Após habilitar Gourard Shading (tecla M), podemos alternar entre os modelos de iluminação:
+
+- Difusa -- ao apertar a tecla 9
+  
+![Screenshot 2025-07-09 194142](https://github.com/user-attachments/assets/ada00356-386b-4679-8ed6-66eeb25d4a23)
+
+
+- Blinn-Phong -- ao apertar a tecla 0
+  
+![Screenshot 2025-07-09 194200](https://github.com/user-attachments/assets/547494ab-54ed-426d-98ec-ffd181cde8f8)
+
 
 ## Detalhes de Implementação
 - A curva de Bézier que movimenta o Sol têm quatro pontos de controle e a animação do objeto é chamada a cada frame, sendo limitada a 20 segundos, para o Sol ir de um canto ao outro do quarto.
