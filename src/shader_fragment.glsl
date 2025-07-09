@@ -25,11 +25,17 @@ uniform vec3 Ks_uniform;
 uniform int material_uses_texture;
 
 // Identificador que define qual objeto está sendo desenhado no momento
-#define PLANE  0
+#define PLANE 0
 #define CAT 1
+#define SPHERE 2
+#define SOFA1 3
+#define SOFA2 4
+#define SOFA3 5
+#define RUG 6
+#define WALL 7
+
 #define SEAT1 11
 #define SEAT2 12
-#define BED 19
 
 
 uniform int object_id;
@@ -45,6 +51,10 @@ uniform sampler2D TextureImage2;
 uniform sampler2D TextureImage3;
 uniform sampler2D TextureImage4;
 uniform sampler2D TextureImage5;
+uniform sampler2D TextureImage6;
+uniform sampler2D TextureImage7;
+uniform sampler2D TextureImage8;
+
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec4 color;
@@ -95,23 +105,73 @@ void main()
         V = texcoords.y;
         color.rgb = texture(TextureImage0, vec2(U,V)).rgb * (lambert + 0.1);
     }
+    else if (object_id == WALL) {
+        float repeat = 4.0;
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage7, tiled_coords); // wall.jpg
+    }
     else if (object_id == CAT) {
         color = texture(TextureImage1, texcoords);
     }
     else if (object_id == 11) { // SEAT1
-        color = texture(TextureImage3, texcoords); // flat-lay-fabric-texture-background
+        float repeat = 4.0;
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage4, tiled_coords); // flat-lay-fabric-texture-background
     }
     else if (object_id == 12) { // SEAT2
-        color = texture(TextureImage4, texcoords); // red-handmade-paper-texture-background
+        float repeat = 4.0;
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage5, tiled_coords); // red-handmade-paper-texture-background
     }
-    else if ( object_id == BED )
-    {
-        U = texcoords.x;
-        V = texcoords.y;
-        color.rgb = Kd1 * max((0.3 - lambert), 0.0);
+    else if (object_id == SOFA1) {
+        float repeat = 6.0;
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage2, tiled_coords); // textura 1.jpg
     }
-    else if (object_id == 17) {
-    color = texture(TextureImage2, texcoords);
+    else if (object_id == SOFA2) {
+        float repeat = 6.0;
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage3, tiled_coords); // textura 2.jpg
+    }
+    else if (object_id == SOFA3) {
+        float repeat = 6.0;
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage4, tiled_coords); // textura 3.jpg
+    }
+    else if (object_id == RUG) {
+        float repeat = 8.0; 
+        vec2 tiled_coords = fract(texcoords * repeat);
+        color = texture(TextureImage6, tiled_coords);
+    }
+    else if (object_id == SPHERE){
+        // PREENCHA AQUI as coordenadas de textura da esfera, computadas com
+        // projeção esférica EM COORDENADAS DO MODELO. Utilize como referência
+        // o slides 134-150 do documento Aula_20_Mapeamento_de_Texturas.pdf.
+        // A esfera que define a projeção deve estar centrada na posição
+        // "bbox_center" definida abaixo.
+
+        // Você deve utilizar:
+        //   função 'length( )' : comprimento Euclidiano de um vetor
+        //   função 'atan( , )' : arcotangente. Veja https://en.wikipedia.org/wiki/Atan2.
+        //   função 'asin( )'   : seno inverso.
+        //   constante M_PI
+        //   variável position_model
+
+        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+        float raio = 1.0;
+
+        // Normalizando a posição do modelo para a superfície da esfera
+        vec4 p_linha = bbox_center + (raio * ((position_model - bbox_center) / length(position_model - bbox_center)));
+        vec4 vetor_p = p_linha - bbox_center;
+
+        // Calculando os ângulos esféricos
+        float tetha = atan(vetor_p.x,vetor_p.z);
+        float phi = asin(vetor_p.y / raio);
+
+        // Calculando as coordenadas do mapeamento para a textura
+        U = (tetha + M_PI) / (2*M_PI);
+        V = (phi + M_PI_2) / M_PI;
+        color = texture(TextureImage8, vec2(U,V));
     }
 
     // NOTE: Se você quiser fazer o rendering de objetos transparentes, é

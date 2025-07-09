@@ -1,0 +1,35 @@
+# Blender MTL File: 'sofa.blend'
+# Material Count: 3
+
+newmtl t_amarelo
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 16.000000 16.000000 16.000000 C:\\Users\\JOAO PEDRO\\Downloads\\Models\\Estar\\Nova pasta (19)\\textures\\Como-34.jpg
+
+newmtl t_azul
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 2.000000 2.000000 2.000000 C:\\Users\\JOAO PEDRO\\Downloads\\Models\\Estar\\Nova pasta (9)\\Arketipo__bump.jpg
+
+newmtl t_azul.001
+Ns 225.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd -s 6.000000 6.000000 6.000000 C:\\Users\\JOAO PEDRO\\Downloads\\Models\\Estar\\Nova pasta (12)\\cassina_550_bump.jpg
