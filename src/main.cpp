@@ -45,6 +45,9 @@
 #include "matrices.h"
 #include "collisions.h"
 
+#define M_PI   3.14159265358979323846
+#define M_PI_2 1.57079632679489661923
+
 // BEGIN - Minhas estruturas e constantes e funcoes
 
 // ESTRUTURAS
@@ -2005,8 +2008,8 @@ bool CheckAllCollisions() {
   bool collision_with_walls = false;
   bool collision_with_objects = false;
   // bool collision_with_spheres = false;
-  collision_with_objects = CheckCollisionPointCube(
-      player_instance.position, g_VirtualScene["Seat_Sphere.002"]);
+  // collision_with_objects = CheckCollisionPointCube(
+    //   player_instance.position, g_VirtualScene["Seat_Sphere.002"]);
   /*
   for (const std::string &name : g_ObjectNames) {
 
