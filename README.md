@@ -1,19 +1,35 @@
 # RELATÓRIO
 
-Trabalho final da disciplina INF01047 - Fundamentos de Computação Gráfica.
-
-Prof. Eduardo Gastal, semestre de 2025/1.
+Trabalho final da disciplina INF01047 - Fundamentos de Computação Gráfica  
+Prof. Eduardo Gastal, semestre de 2025/1
 
 Trabalho elaborado e executado pelas alunas Isis Burmeister Pericolo e Joana Alexia Campos de Vargas.
 
 ## Sobre
-Um gato doméstico está a procura do local mais quentinho e confortável para tirar sua soneca. Ajude-o a encontrar o local da sala onde bate o sol da tarde! ☀️ 🐈
+Um gato doméstico está à procura do local mais quentinho e confortável para tirar sua soneca. Ajude-o a encontrar o local da sala onde bate o sol da tarde!
+ ☀️ 🐈
 
-## Especificações
+
+---
+
+## Contribuições de cada membro
+
+- **Isis Burmeister Pericolo:** Implementação da lógica de movimentação do gato, integração das malhas poligonais, desenvolvimento dos testes de colisão e parte da documentação.
+- **Joana Alexia Campos de Vargas:** Implementação dos modelos de iluminação, texturização dos objetos, desenvolvimento da câmera livre/look-at e animações, além da organização do código.
+
+---
+
+## Uso de ferramentas de IA
+
+A dupla fez uso do GitHub Copilot (ChatGPT 4.1) para auxílio durante o desenvolvimento. As ferramentas foram utilizadas principalmente para sugestões de código em C++/OpenGL, esclarecimento de dúvidas sobre shaders, rastreio de erros na execução, exemplos de implementação de curvas de Bézier, e formatação da documentação. Consideramos as ferramentas úteis para acelerar a escrita de código repetitivo e para consulta rápida de sintaxe, mas em tópicos mais avançados de computação gráfica (como integração de múltiplos shaders e lógica de colisão), as respostas nem sempre foram precisas ou adaptadas ao contexto do nosso projeto, exigindo revisão manual e ajustes.
+
+
+## Especificações e conceitos aplicados
+
   - Malhas poligonais complexas ✅ 
   - Transformações geométricas ✅ 
   - Câmera livre e câmera look-at ✅ 
-  - Testes de intersecção entre objetos virtuais 
+  - Testes de intersecção entre objetos virtuais ❌
   - Modelos de iluminação de objetos geométricos ✅ -- difuso e Blinn-Phong.
   - Instâncias de objetos ✅ -- o Gato, o quarto, os móveis, e o Sol.
   - Mapeamento de texturas UV ✅ -- o Gato, o quarto, os móveis, e o Sol.
@@ -48,8 +64,8 @@ Ao apertar F novamente, já utilizando o modo Free Camera, a tela reseta para a 
 
 Para retornar ao modo câmera LookAt, aperte a tecla L.
 
-### Modelo de Interpolação de Phong e Gouraud Shading 
-Por padrão, o programa utiliza Phong Shading. 
+### Modelo de Interpolação de Blinn-Phong e Gouraud Shading 
+Por padrão, o programa utiliza Blinn-Phong Shading. 
 
 ![Screenshot 2025-07-08 235827](https://github.com/user-attachments/assets/5205fbb3-e738-4278-a745-026b74b0c851)
 
@@ -73,3 +89,40 @@ Após habilitar Gourard Shading (tecla M), podemos alternar entre os modelos de 
 ## Detalhes de Implementação
 - A curva de Bézier que movimenta o Sol têm quatro pontos de controle e a animação do objeto é chamada a cada frame, sendo limitada a 20 segundos, para o Sol ir de um canto ao outro do quarto.
 - Shading -- Phong Shading se encontra em shader_fragment.glsl; Gourard Shading se encontra em shader_vertez.glsl.
+
+
+## Como compilar e executar
+
+### Linux
+
+1. Instale as dependências necessárias (GLFW, OpenGL, etc). Em Ubuntu:
+   ```sh
+   sudo apt-get install build-essential libglfw3-dev libglm-dev libglew-dev libx11-dev libxi-dev libxrandr-dev libxinerama-dev libxcursor-dev libxxf86vm-dev
+   ```
+2. Compile usando o Makefile:
+   ```sh
+   make
+   ```
+3. Execute:
+   ```sh
+   make run
+   ```
+
+### macOS
+
+1. Instale as dependências via Homebrew:
+   ```sh
+   brew install glfw glm
+   ```
+2. Compile usando o Makefile específico:
+   ```sh
+   make -f Makefile.macOS
+   ```
+3. Execute:
+   ```sh
+   make -f Makefile.macOS run
+   ```
+
+### Windows
+
+- Recomenda-se o uso do Code::Blocks ou VSCode com MinGW. Veja instruções detalhadas no arquivo `informacoesDeCompilacao.txt`.
