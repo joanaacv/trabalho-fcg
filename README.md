@@ -36,7 +36,7 @@ Esta informação está presente a todo momento no programa, de maneira textual 
 Estes valores não modificam o andamento do programa nem geram mudanças visíveis na tela, exceto o vetor Y, que como indicado acima, rotaciona o Sol em seu próprio eixo.
 
 Uma lógica de jogo não foi implementada devido à limitações temporais durante a execução deste trabalho. O Gato consegue, portanto, andar pela sala e pelo espaço tempo, com o Sol logo acima, mas sem encontrar um feixe de luz quentinho para se aninhar.
-Como compensação, asseguramos de que nossos gatos na vida real tiveram diversas sonecas sob a luz do sol durante a implementação deste trabalho, e continuaram desfrutando deste conforto para além dele. ☀️ 🐈
+Como compensação, asseguramos de que nossos gatos na vida real tiveram diversas sonecas sob a luz do sol durante a implementação deste trabalho, e continuarão desfrutando deste conforto para além dele. ☀️ 🐈
 
 ### Modos de Câmera
 Ao pressionar F, o jogo translada a câmera para o centro do Gato e habilita o modo Free Camera, onde o usuário pode
