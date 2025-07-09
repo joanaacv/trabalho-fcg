@@ -25,10 +25,10 @@ O programa roda em aproximadamente 60 fps.
 
 ## Manual de utilização da aplicação
 
-O jogo carrega usando uma câmera LookAt. As teclas W (à frente), A (à esquerda), S (para trás), e D (à direita) controlam o movimento do Gato através do quarto. O ângulo da câmera pode ser movimentado através do mouse.
-Tratamento de colisões para cada objeto não foram implementadas no presente momento, apenas as Bounding Boxes existem sem os testes de intersecção.
+O jogo carrega usando uma câmera LookAt. As teclas W (à frente), A (à esquerda), S (para trás), e D (à direita) controlam o movimento do Gato através da sala. O ângulo da câmera pode ser movimentado através do mouse.
+Tratamento de colisões para cada objeto não foram implementadas no presente momento, apenas as Bounding Boxes existem, sem os testes de intersecção.
 
-O Sol se movimenta de maneira independente, baseado em delta-tempo, fazendo uma curva acima da cena do quarto, a fim de representar o movimento natural do sol ao longo do dia. Para este efeito foram usadas curvas de Bézier.
+O Sol se movimenta de maneira independente, baseado em delta-tempo, fazendo uma curva acima da cena da sala, a fim de representar o movimento natural do sol ao longo do dia. Para este efeito foram usadas curvas de Bézier.
 O objeto pode ser rotacionado em seu próprio eixo ao apertar a tecla Y, sem cessar seu movimento.
 
 Ao pressionar as teclas X, Y ou Z em qualquer momento do programa, a matriz de rotação de ângulos de Euler é atualizada, aumentando os valores relacionados a cada variável. 
