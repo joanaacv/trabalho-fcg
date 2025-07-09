@@ -62,4 +62,4 @@ Após habilitar Gourard Shading (tecla M), podemos alternar entre o modelo de il
 
 ## Detalhes de Implementação
 - A curva de Bézier que movimenta o Sol têm quatro pontos de controle e a animação do objeto é chamada a cada frame, sendo limitada a 20 segundos, para o Sol ir de um canto ao outro do quarto.
-- Shading -- Phong Shading se encontra no fragment shader; Gourard Shading se encontra no vertez shader.
+- Shading -- Phong Shading se encontra em shader_fragment.glsl; Gourard Shading se encontra em shader_vertez.glsl.
