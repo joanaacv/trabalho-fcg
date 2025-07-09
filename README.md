@@ -10,22 +10,20 @@ Trabalho elaborado e executado pelas alunas Isis Burmeister Pericolo e Joana Ale
 Um gato doméstico está a procura do local mais quentinho e confortável para tirar sua soneca. Ajude-o a encontrar o local da sala onde bate o sol da tarde!
 
 ## Especificações
-  - Malhas poligonais complexas
-  - Transformações geométricas
-  - Câmera livre e câmera look-at
-  - Testes de intersecção entre objetos virtuais
+  - Malhas poligonais complexas ✅ 
+  - Transformações geométricas ✅ 
+  - Câmera livre e câmera look-at ✅ 
+  - Testes de intersecção entre objetos virtuais ✅ 
   - Modelos de iluminação de objetos geométricos
   - Instâncias de objetos
-  - Mapeamento de texturas
-  - Curvas de Bézier
+  - Mapeamento de texturas ✅ 
+  - Curvas de Bézier ✅ 
   - Animações baseadas no tempo
 
 ## Manual de utilização da aplicação
 
-O jogo carrega usando uma camera LookAt.
+O jogo carrega usando uma câmera LookAt.
 
-### Modos de Camera
-Ao pressionar F, o jogo translada a camera para o centro do gato e habilita o modo free camera, onde o usuario pode
-mover livremente o observador usando as teclas W,A,S,D
-
-## Compilação e Execução
+### Modos de Câmera
+Ao pressionar F, o jogo translada a câmera para o centro do Gato e habilita o modo Free Camera, onde o usuário pode
+mover livremente o observador usando as teclas W, A, S, D.
