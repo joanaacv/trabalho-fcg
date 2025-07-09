@@ -22,6 +22,7 @@ uniform mat4 projection;
 uniform vec3 Kd_uniform;
 uniform vec3 Ka_uniform;
 uniform vec3 Ks_uniform;
+uniform int light_mode; // 0 = difusa (Lambert), 1 = Blinn-Phong
 
 uniform int material_uses_texture;
 
@@ -90,6 +91,11 @@ void main()
     float ambient = 0.2;
     float diff = max(dot(n, l), 0.0);
     float spec = pow(max(dot(r, v), 0.0), 32.0);
+
+    if (light_mode == 1) { // Blinn-Phong
+        vec3 h = normalize(l + v);
+        spec = pow(max(dot(n, h), 0.0), 32.0);
+    }
 
     color = vec4(vec3(ambient + diff + spec), 1.0);
 

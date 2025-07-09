@@ -283,6 +283,7 @@ bool g_UsePerspectiveProjection = true;
 bool g_ShowInfoText = true;
 
 int g_ShadingMode = 0; // 0 = Phong, 1 = Gouraud
+int g_LightMode = 0;   // 0 = Phong, 1 = Gouraud
 
 // Variáveis que definem um programa de GPU (shaders). Veja função
 // LoadShadersFromFiles().
@@ -591,6 +592,9 @@ int main(int argc, char *argv[]) {
 
     glUniform1i(glGetUniformLocation(g_GpuProgramID, "shading_mode"),
                 g_ShadingMode);
+
+    glUniform1i(glGetUniformLocation(g_GpuProgramID, "light_mode"),
+                g_LightMode);
 
     // Desenhamos o modelo da esfera
     model =
@@ -1505,6 +1509,13 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action,
   }
   if (key == GLFW_KEY_M && action == GLFW_PRESS) {
     g_ShadingMode = 1;
+  }
+
+  if (key == GLFW_KEY_9 && action == GLFW_PRESS) {
+    g_LightMode = 0;
+  }
+  if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
+    g_LightMode = 1;
   }
 
   // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para

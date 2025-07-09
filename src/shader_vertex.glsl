@@ -14,6 +14,7 @@ uniform int shading_mode; // 0 = Phong, 1 = Gouraud
 // Parâmetros de iluminação (exemplo, ajuste conforme seu código)
 uniform vec4 light_position;
 uniform vec4 camera_position;
+uniform int light_mode; // 0 = difusa (Lambert), 1 = Blinn-Phong
 
 out vec4 position_world;
 out vec4 position_model;
@@ -33,14 +34,19 @@ void main()
 
     // Cálculo Gouraud (iluminação por vértice)
     if (shading_mode == 1) {
-        vec3 N = normalize(normal.xyz);
-        vec3 L = normalize((light_position - position_world).xyz);
-        vec3 V = normalize((camera_position - position_world).xyz);
-        vec3 R = reflect(-L, N);
+        vec3 n = normalize(normal.xyz);
+        vec3 l = normalize((light_position - position_world).xyz);
+        vec3 v = normalize((camera_position - position_world).xyz);
+        vec3 r = reflect(-l, n);
 
         float ambient = 0.2;
-        float diff = max(dot(N, L), 0.0);
-        float spec = pow(max(dot(R, V), 0.0), 32.0);
+        float diff = max(dot(n, l), 0.0);
+        float spec = pow(max(dot(r, v), 0.0), 32.0);
+
+        if (light_mode == 1) { // Blinn-Phong
+            vec3 h = normalize(l + v);
+            spec = pow(max(dot(n, h), 0.0), 32.0);
+        }
 
         gouraud_color = vec4(vec3(ambient + diff + spec), 1.0);
     }
