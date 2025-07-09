@@ -76,10 +76,22 @@ struct MovementDirection {
 glm::vec4 camera_position_c = glm::vec4(0.0f, 7.0f, -5.0f, 1.0f);
 bool use_free_camera = false; // Variavel que define se a free camera esta ativa
 bool first_free_camera_pass = false;
+bool execute_sun_animation =
+    true; // Variavel que define se a animacao do sol esta ativa
+// Definicao de variaveis vec4 para ter as coordenadas dos objetos
 glm::vec4 cat_position_c = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+glm::vec4 sun_position_c = glm::vec4(-7.0f, 7.0f, 0.0f, 1.0f); // Posição do sol
 
 std::vector<std::string>
     g_ObjectNames; // Vetor que armazena os nomes dos objetos
+
+// Points to create a Bezier curve for the sun
+//  The sun will be animated using a Bezier curve
+glm::vec3 sun_start_point = glm::vec3(-7.0f, 5.0f, 0.0f);
+glm::vec3 sun_end_point = glm::vec3(7.0f, 5.0f, 0.0f);
+// Pontos intermediários elevados para formar um arco
+glm::vec3 middle_point_1 = glm::vec3(-3.5f, 7.0f, 0.0f);
+glm::vec3 middle_point_2 = glm::vec3(3.5f, 7.0f, 0.0f);
 
 // PROTOTIPOS
 
@@ -90,6 +102,9 @@ bool CheckAllCollisions();
 void AdjustBoundingBox(
     std::string name,
     float scale_factor); // Ajusta a bounding box de acordo com a posicao
+
+glm::vec4 BezierCurveAnimation(float time, glm::vec3 p0, glm::vec3 p1,
+                               glm::vec3 p2, glm::vec3 p3);
 
 // END - Minhas estruturas e funcoes
 
@@ -452,6 +467,17 @@ int main(int argc, char *argv[]) {
     // os shaders de vértice e fragmentos).
     glUseProgram(g_GpuProgramID);
 
+    /* Aqui iremos criar nossa animacao introdutoria do sol */
+    if (execute_sun_animation) {
+      // Calcula o tempo total de ida e volta (ex: 20 segundos para ida e volta)
+      float period = 20.0f;
+      float t = fmod(glfwGetTime(), period) / (period / 2.0f);
+      // Vai de 0 a 1 e depois de 1 a 0
+      float time = t <= 1.0f ? t : 2.0f - t;
+      sun_position_c = BezierCurveAnimation(
+          time, sun_start_point, middle_point_1, middle_point_2, sun_end_point);
+    }
+
     // Computamos a posição da câmera utilizando coordenadas esféricas.  As
     // variáveis g_CameraDistance, g_CameraPhi, e g_CameraTheta são
     // controladas pelo mouse do usuário. Veja as funções CursorPosCallback()
@@ -562,9 +588,10 @@ int main(int argc, char *argv[]) {
 #define SEAT2 12
 
     // Desenhamos o modelo da esfera
-    model = Matrix_Translate(-7.0f, 7.0f, 0.0f) * Matrix_Rotate_Z(0.6f) *
-            Matrix_Rotate_X(0.2f) *
-            Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
+    model =
+        Matrix_Translate(sun_position_c.x, sun_position_c.y, sun_position_c.z) *
+        Matrix_Rotate_Z(0.6f) * Matrix_Rotate_X(0.2f) *
+        Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
     glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(g_object_id_uniform, SPHERE);
     DrawVirtualObject("the_sphere");
@@ -1995,6 +2022,22 @@ void AdjustBoundingBox(std::string name, float scale_factor) {
   g_VirtualScene[name].bbox_min.z *= scale_factor;
   g_VirtualScene[name].bbox_max.z *= scale_factor;
 } // Ajusta a bounding box de acordo com a posicao
+
+glm::vec4 BezierCurveAnimation(float time, glm::vec3 p0, glm::vec3 p1,
+                               glm::vec3 p2, glm::vec3 p3) {
+  float u = 1 - time;
+  float double_time = time * time;
+  float double_u = u * u;
+  float triple_u = double_u * u;
+  float triple_time = double_time * time;
+
+  glm::vec3 new_point = triple_u * p0;
+  new_point += 3 * double_u * time * p1;
+  new_point += 3 * u * double_time * p2;
+  new_point += triple_time * p3;
+
+  return glm::vec4(new_point, 1);
+}
 
 // END - Implementation of my functions
 
