@@ -14,9 +14,9 @@ Um gato doméstico está a procura do local mais quentinho e confortável para t
   - Transformações geométricas ✅ 
   - Câmera livre e câmera look-at ✅ 
   - Testes de intersecção entre objetos virtuais 
-  - Modelos de iluminação de objetos geométricos ✅ -- difuso e Blinn-Phong, melhor visualizados com Gourard Shading.
+  - Modelos de iluminação de objetos geométricos ✅ -- difuso e Blinn-Phong.
   - Instâncias de objetos ✅ -- o Gato, o quarto, os móveis, e o Sol.
-  - Mapeamento de texturas ✅ -- o Gato, o quarto, os móveis, e o Sol.
+  - Mapeamento de texturas UV ✅ -- o Gato, o quarto, os móveis, e o Sol.
   - Curvas de Bézier ✅ -- utilizadas para a animação do objeto Sol.
   - Animações baseadas no tempo ✅
 
@@ -25,8 +25,8 @@ O programa roda em aproximadamente 60 fps.
 
 ## Manual de utilização da aplicação
 
-O jogo carrega usando uma câmera LookAt. As teclas W (à frente), A (à esquerda), S (à direita), e D (para trás) controlam o movimento do Gato através do quarto. 
-Tratamento de colisões para cada objeto não foram implementadas no presente momento.
+O jogo carrega usando uma câmera LookAt. As teclas W (à frente), A (à esquerda), S (para trás), e D (à direita) controlam o movimento do Gato através do quarto. O ângulo da câmera pode ser movimentado através do mouse.
+Tratamento de colisões para cada objeto não foram implementadas no presente momento, apenas as Bounding Boxes existem sem os testes de intersecção.
 
 O Sol se movimenta de maneira independente, baseado em delta-tempo, fazendo uma curva acima da cena do quarto, a fim de representar o movimento natural do sol ao longo do dia. Para este efeito foram usadas curvas de Bézier.
 O objeto pode ser rotacionado em seu próprio eixo ao apertar a tecla Y, sem cessar seu movimento.
@@ -44,8 +44,9 @@ mover livremente o observador usando as teclas W, A, S, D.
 
 ![Screenshot 2025-07-08 235738](https://github.com/user-attachments/assets/0c9dc7c6-a2c4-42fd-b19c-da2ddb2ad470)
 
-No momento, não foi implementada uma maneira de retornada ao modo de câmera LookAt após a habilitação do modo Free Camera.
 Ao apertar F novamente, já utilizando o modo Free Camera, a tela reseta para a posição inicial da câmera no modo Free Camera, ao centro do Gato.
+
+Para retornar ao modo câmera LookAt, aperte a tecla L.
 
 ### Modelo de Interpolação de Phong e Gouraud Shading 
 Por padrão, o programa utiliza Phong Shading. 
@@ -56,3 +57,9 @@ Ao apertar a tecla M, passamos a utilizar Gouraud Shading. Para retornar ao mode
 
 ![Screenshot 2025-07-08 235843](https://github.com/user-attachments/assets/09cfc253-8830-4028-9658-3fbe2b47c8b9)
 
+### Modelos de iluminação difuso e Blinn-Phong
+Após habilitar Gourard Shading (tecla M), podemos alternar entre o modelo de iluminação difusa -- ao apertar a tecla 9 -- e o modelo de iluminação Blinn-Phong -- ao apertar a tecla 0.
+
+## Detalhes de Implementação
+- A curva de Bézier que movimenta o Sol têm quatro pontos de controle e a animação do objeto é chamada a cada frame, sendo limitada a 20 segundos, para o Sol ir de um canto ao outro do quarto.
+- Shading -- Phong Shading se encontra no fragment shader; Gourard Shading se encontra no vertez shader.
